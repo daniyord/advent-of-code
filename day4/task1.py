@@ -1,57 +1,49 @@
-def get_data():
-    matrix = []
-
-    with open('input_demo.txt', 'r') as file:
-        for line in file:
-            row = []
-            for symbol in line:
-                if symbol != '\n':
-                    row.append(symbol)
-
-            matrix.append(row)
-
-    return matrix
+from shared import get_input
 
 
 def check_field(matrix, x, y):
-    if y <= len(matrix[0]) - 3:
+    len_x = len(matrix)
+    len_y = len(matrix[0])
+
+    count = 0
+
+    if y <= len_y - 4:
         if matrix[x][y] == "X" and matrix[x][y+1] == "M" and matrix[x][y+2] == "A" and matrix[x][y+3] == "S":
-            return True
+            count += 1
 
         if matrix[x][y] == "S" and matrix[x][y+1] == "A" and matrix[x][y+2] == "M" and matrix[x][y+3] == "X":
-            return True
+            count += 1
 
-    if x <= len(matrix) - 3:
+    if x <= len_x - 4:
         if matrix[x][y] == "X" and matrix[x+1][y] == "M" and matrix[x+2][y] == "A" and matrix[x+3][y] == "S":
-            return True
+            count += 1
 
         if matrix[x][y] == "S" and matrix[x+1][y] == "A" and matrix[x+2][y] == "M" and matrix[x+3][y] == "X":
-            return True
+            count += 1
 
-    if x < len(matrix) - 3 and y < len(matrix[0]) - 3:
+    if x <= len_x - 4 and y <= len_y - 4:
         if matrix[x][y] == "X" and matrix[x+1][y+1] == "M" and matrix[x+2][y+2] == "A" and matrix[x+3][y+3] == "S":
-            return True
+            count += 1
 
         if matrix[x][y] == "S" and matrix[x+1][y+1] == "A" and matrix[x+2][y+2] == "M" and matrix[x+3][y+3] == "X":
-            return True
+            count += 1
 
-    if x >= 3 and y < len(matrix[0]) - 3:
+    if x >= 3 and y <= len_y - 4:
         if matrix[x][y] == "X" and matrix[x-1][y+1] == "M" and matrix[x-2][y+2] == "A" and matrix[x-3][y+3] == "S":
-            return True
+            count += 1
 
         if matrix[x][y] == "S" and matrix[x-1][y+1] == "A" and matrix[x-2][y+2] == "M" and matrix[x-3][y+3] == "X":
-            return True
+            count += 1
 
-    return False
+    return count
 
 
-matrix = get_data()
+matrix = get_input()
 
 result = 0
 
 for i, row in enumerate(matrix):
     for j, cell in enumerate(row):
-        if check_field(matrix, i, j):
-            result += 1
+        result += check_field(matrix, i, j)
 
 print(result)
