@@ -23,3 +23,12 @@ def get_input():
                 rules.append(parts)
 
     return (page_orders, rules)
+
+
+def check_rule(rule, page_orders):
+    for index, rule_part in enumerate(rule):
+        for check_index in range(index+1, len(rule)):
+            if rule_part not in page_orders or rule[check_index] not in page_orders[rule_part]:
+                return (False, index, check_index)
+
+    return (True, -1, -1)
