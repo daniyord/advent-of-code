@@ -1,5 +1,5 @@
 from shared import get_input, move
-
+import time
 
 matrix, p_x, p_y = get_input()
 
@@ -34,18 +34,27 @@ def process(matrix, p_x, p_y):
 result = 0
 
 index = 0
+
+start = time.time()
+
 for i, row in enumerate(matrix):
     for j, _ in enumerate(row):
         if matrix[i][j] == ".":
             matrix[i][j] = "#"
 
+            start_process = time.time()
             process_result = process(matrix, p_x, p_y)
+            end_process = time.time()
+
             if process_result == "loop":
                 result += 1
 
-            print(process_result, result, index)
+            print(process_result, result, index,
+                  (end_process - start_process) * 1000)
             index += 1
 
             matrix[i][j] = "."
 
-print(result)
+end = time.time()
+
+print(result, end - start)
