@@ -17,6 +17,25 @@ def get_input():
     return (matrix, p_x, p_y)
 
 
+def find_path(matrix, start_x, start_y):
+    direction = "up"
+    operation = "move"
+
+    visited_places = []
+
+    while (operation != "stop"):
+        operation, start_x, start_y = move(direction, matrix, start_x, start_y)
+
+        if operation == "move":
+            if not f"{start_x}_{start_y}" in visited_places:
+                visited_places.append(f"{start_x}_{start_y}")
+
+        elif operation != "stop":
+            direction = operation
+
+    return visited_places
+
+
 def move(direction, matrix, p_x, p_y):
     match direction:
         case "up":
