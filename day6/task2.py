@@ -25,9 +25,14 @@ def check_for_loop(direction, matrix, start_x, start_y):
     visited_places = []
 
     while (operation != "stop"):
+        # prev_operation = operation
+
         operation, start_x, start_y = move(direction, matrix, start_x, start_y)
 
         if operation in ["up", "right", "down", "left"]:
+            # if prev_operation == "move":
+            #     return "block"
+
             direction = operation
             continue
 
@@ -44,101 +49,47 @@ def check_for_loop(direction, matrix, start_x, start_y):
 matrix, start_x, start_y = get_input()
 visited_places = find_path(matrix, start_x, start_y)
 
-# print(visited_places)
-
-# for place in visited_places:
-#     print(place)
-
-# exit(0)
-
-# for line in matrix:
-#     print(line)
-# print()
-
-result = set()
+result = []
 start = time.time()
 
-for index, key in enumerate(visited_places):
-    if index == 0:
+for index in range(1, len(visited_places) - 1):
+    current = visited_places[index]
+    prev = visited_places[index-1]
+    next = visited_places[index+1]
+
+    if current == f"{start_x}_{start_y}":
         continue
 
-    if index == len(visited_places) - 1:
-        break
+    # prev_parts = prev.split("_")
 
-    check_next = False
+    # prev_x = int(prev_parts[0])
+    # prev_y = int(prev_parts[1])
+    # prev_direction = prev_parts[2]
 
-    # if key == f"{start_x}_{start_y}":
-    #     continue
-
-    prev_direction = visited_places[index-1].split("_")[2]
-
-    parts = key.split("_")
-
-    check_x = int(parts[0])
-    check_y = int(parts[1])
-
-    next_parts = visited_places[index+1].split("_")
+    next_parts = next.split("_")
 
     next_x = int(next_parts[0])
     next_y = int(next_parts[1])
-
-    if check_x == next_x and check_y == next_y:
-        continue
-
-    if check_y > next_y:
-        next_direction = "right"
-        if prev_direction == "left":
-            continue
-
-    if check_x < next_x:
-        next_direction = "down"
-        if prev_direction == "up":
-            continue
-
-    if check_y < next_y:
-        next_direction = "left"
-        if prev_direction == "right":
-            continue
-
-    if check_x > next_x:
-        next_direction = "up"
-        if prev_direction == "down":
-            continue
 
     start_process = time.time()
 
     matrix[next_y][next_x] = "#"
 
-    # for line in matrix:
-    #     print(line)
-
-    # must_print = False
-    # if check_x == 4 and check_y == 8 and next_x == 3 and next_y == 8:
-    #     print(direction, check_x, check_y, next_x, next_y)
-    #     print(matrix[next_x][next_y])
-    #     for line in matrix:
-    #         print(line)
-    #     print()
-    #     must_print = True
-
-    # print("----", direction, check_x, check_y, next_x, next_y)
-
-    process_result = check_for_loop(next_direction, matrix, check_x, check_y)
+    process_result = check_for_loop("up", matrix, start_x, start_y)
 
     matrix[next_y][next_x] = "."
+
     end_process = time.time()
 
-    # print(check_x, check_y, next_direction, next_x, next_y)
     if process_result == "loop":
-        # print("-----------", check_x, check_y, next_x, next_y, next_direction)
-        result.add(f"{next_x}_{next_y}")
+        result.append(f"{next_x}_{next_y}")
 
     print(process_result, len(result), (end_process - start_process) * 1000)
 
 
 end = time.time()
 
-print(len(result), end - start)
+print(len(set(result)), end - start)
 
 # ['.', '.', '.', '.', '#', '.', '.', '.', '.', '.']
 # ['.', '.', '.', '.', '.', '.', '.', '.', '.', '#']
