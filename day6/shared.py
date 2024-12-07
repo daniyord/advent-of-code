@@ -1,7 +1,7 @@
 def get_input():
     matrix = []
 
-    with open('input_demo.txt', 'r') as file:
+    with open('input.txt', 'r') as file:
         for i, line in enumerate(file):
             row = []
             for j, symbol in enumerate(line):
