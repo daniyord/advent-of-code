@@ -19,12 +19,13 @@ def find_path(matrix, start_x, start_y):
     return visited_places
 
 
-def check_for_loop(direction, matrix, start_x, start_y):
+def check_for_loop(direction, matrix, start_x, start_y, must_print=False):
     operation = "move"
     visited_places = []
 
     while (operation != "stop"):
-        # print("---", direction,  start_x, start_y)
+        if must_print:
+            print("---", direction,  start_x, start_y)
 
         operation, start_x, start_y = move(direction, matrix, start_x, start_y)
 
@@ -52,7 +53,7 @@ visited_places = find_path(matrix, start_x, start_y)
 #     print(line)
 # print()
 
-result = 0
+result = set()
 start = time.time()
 
 for index, key in enumerate(visited_places):
@@ -96,27 +97,43 @@ for index, key in enumerate(visited_places):
     # for line in matrix:
     #     print(line)
 
-    if check_x == 3 and check_y == 6 and next_x == 2 and next_y == 6:
+    must_print = False
+    if check_x == 4 and check_y == 8 and next_x == 3 and next_y == 8:
         print(direction, check_x, check_y, next_x, next_y)
         print(matrix[next_x][next_y])
         for line in matrix:
             print(line)
         print()
+        must_print = True
 
     # print("----", direction, check_x, check_y, next_x, next_y)
 
-    process_result = check_for_loop(direction, matrix, check_x, check_y)
+    process_result = check_for_loop(
+        direction, matrix, check_x, check_y, must_print)
+    must_print = False
 
     matrix[next_y][next_x] = "."
     end_process = time.time()
 
+    print(check_x, check_y)
     if process_result == "loop":
-        # print("-----------", direction, check_x, check_y, next_x, next_y)
-        result += 1
+        print("-----------", direction, check_x, check_y, next_x, next_y)
+        result.add(f"{next_x}_{next_y}")
 
-    print(process_result, result, (end_process - start_process) * 1000)
+    # print(process_result, len(result), (end_process - start_process) * 1000)
 
 
 end = time.time()
 
-print(result, end - start)
+print(len(result), end - start)
+
+['.', '.', '.', '.', '#', '.', '.', '.', '.', '.']
+['.', '.', '.', '.', '.', '.', '.', '.', '.', '#']
+['.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
+['.', '.', '#', '.', '.', '.', '.', '.', '.', '.']
+['.', '.', '.', '.', '.', '.', '.', '#', '.', '.']
+['.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
+['.', '#', '.', '.', '.', '.', '.', '.', '.', '.']
+['.', '.', '.', '.', '.', '.', '.', '.', '#', '.']
+['#', '.', '.', '.', '.', '.', '.', '.', '.', '.']
+['.', '.', '.', '.', '.', '.', '#', '.', '.', '.']
