@@ -1,3 +1,6 @@
+import time
+
+
 def check_line(line):
     parts = line.split(":")
 
@@ -36,11 +39,19 @@ def check_line(line):
             if op == "||":
                 total = int(str(total) + str(option[index+1]))
 
+            if total > check_total:
+                return False, None
+
+        # print(line, option, total, total == check_total)
+
         if total == check_total:
+            print(line, option)
             return True, check_total
 
     return False, None
 
+
+start = time.time()
 
 result = []
 with open('input.txt', 'r') as file:
@@ -49,7 +60,8 @@ with open('input.txt', 'r') as file:
 
         is_ok, total = check_line(line)
         if is_ok:
-            print(line, total)
             result.append(total)
 
-print(sum(result))
+end = time.time()
+
+print(sum(result), end - start)

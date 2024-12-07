@@ -29,20 +29,22 @@ def check_line(line):
             if op == "*":
                 total *= option[index+1]
 
+        print(line, option, total, total == check_total)
+
         if total == check_total:
+            # print(line, option)
             return True, check_total
 
     return False, None
 
 
 result = []
-with open('input.txt', 'r') as file:
+with open('input_demo.txt', 'r') as file:
     for line in file:
         line = line.strip()
 
         is_ok, total = check_line(line)
         if is_ok:
-            print(line, total)
             result.append(total)
 
 print(sum(result))
