@@ -1,71 +1,65 @@
-from itertools import repeat
+from shared import get_input
 
-with open('input_demo.txt', 'r') as file:
-    input = file.readline().strip()
-
-    mode = 'digit'
-    file_id = 0
-
-    symbols = []
-    for digit in input:
-        if mode == 'digit':
-            symbols.extend(repeat(str(file_id), int(digit)))
-            mode = 'space'
-            file_id += 1
-            continue
-        if mode == 'space':
-            symbols.extend(repeat('.', int(digit)))
-            mode = 'digit'
-            continue
+symbols = get_input()
 
 start = 0
 end = len(symbols) - 1
 
 print("".join(symbols), len(symbols))
 
-index = 0
 while (start < end):
     symbol = None
-    symbolCount = 0
+    symbol_count = 0
     for i in range(end, 0, -1):
+        if symbol is not None and symbol != symbols[i]:
+            end = i + 1
+            break
+
         if symbols[i] != '.':
-            print("--", symbol)
             if symbol is None:
                 symbol = symbols[i]
-                symbolCount = 1
-                print("alabala", symbol)
-            elif symbol != symbols[i]:
-                end = i + 1
-                break
+                symbol_count = 1
             else:
-                symbolCount += 1
+                symbol_count += 1
 
-    print(end, symbol, symbolCount)
+    empty_count = 0
+    empty_start = None
+    first_empty_passed = False
+    for i in range(start, end):
+        if symbols[i] == '.':
+            if not first_empty_passed:
+                start = i
+                first_empty_passed = True
 
-    exit(1)
+            if empty_start is None:
+                empty_start = i
+                empty_count = 1
+            else:
+                empty_count += 1
+        else:
+            if empty_start is not None:
+                if empty_count >= symbol_count:
+                    break
+                else:
+                    empty_count = 0
+                    empty_start = None
 
-    # while
-    # for i in range(start, len(symbols) - 1):
-    #     if symbols[i] == '.':
-    #         start = i
-    #         break
+    if symbol_count > 0 and empty_count > 0 and empty_count >= symbol_count:
+        for i in range(0, symbol_count):
+            symbols[empty_start + i] = symbol
+            symbols[end + i] = "."
+
+    end -= 1
 
     print(start, end)
-    # print("".join(symbols))
 
-    if start < end:
-        # temp = symbols[start]
-        symbols[start] = symbols[end]
-        symbols[end] = "."
 
-print("-------------------------------------------")
-print("".join(symbols))
+# print("".join(symbols))
 
 result = 0
 for index, symbol in enumerate(symbols):
-    if symbol == '.':
-        break
+    if symbol != '.':
+        result += index * int(symbol)
 
-    result += index * int(symbol)
 
 print(result)

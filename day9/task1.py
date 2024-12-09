@@ -1,22 +1,6 @@
-from itertools import repeat
+from shared import get_input
 
-with open('input.txt', 'r') as file:
-    input = file.readline().strip()
-
-    mode = 'digit'
-    file_id = 0
-
-    symbols = []
-    for digit in input:
-        if mode == 'digit':
-            symbols.extend(repeat(str(file_id), int(digit)))
-            mode = 'space'
-            file_id += 1
-            continue
-        if mode == 'space':
-            symbols.extend(repeat('.', int(digit)))
-            mode = 'digit'
-            continue
+symbols = get_input()
 
 start = 0
 end = len(symbols) - 1
@@ -34,14 +18,12 @@ while (start < end):
             break
 
     print(start, end)
-    # print("".join(symbols))
 
     if start < end:
         symbols[start] = symbols[end]
         symbols[end] = "."
 
-print("-------------------------------------------")
-print("".join(symbols))
+# print("".join(symbols))
 
 result = 0
 for index, symbol in enumerate(symbols):
