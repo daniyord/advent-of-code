@@ -1,6 +1,6 @@
 from itertools import repeat
 
-with open('input.txt', 'r') as file:
+with open('input_demo.txt', 'r') as file:
     input = file.readline().strip()
 
     mode = 'digit'
@@ -21,28 +21,42 @@ with open('input.txt', 'r') as file:
 start = 0
 end = len(symbols) - 1
 
+print("".join(symbols), len(symbols))
+
 index = 0
 while (start < end):
-    for i in range(start, len(symbols) - 1):
-        if symbols[i] == '.':
-            new_start = i
-            break
-
+    symbol = None
+    symbolCount = 0
     for i in range(end, 0, -1):
         if symbols[i] != '.':
-            new_end = i
-            break
+            print("--", symbol)
+            if symbol is None:
+                symbol = symbols[i]
+                symbolCount = 1
+                print("alabala", symbol)
+            elif symbol != symbols[i]:
+                end = i + 1
+                break
+            else:
+                symbolCount += 1
 
-    start = new_start
-    end = new_end
+    print(end, symbol, symbolCount)
+
+    exit(1)
+
+    # while
+    # for i in range(start, len(symbols) - 1):
+    #     if symbols[i] == '.':
+    #         start = i
+    #         break
 
     print(start, end)
     # print("".join(symbols))
 
     if start < end:
-        temp = symbols[start]
+        # temp = symbols[start]
         symbols[start] = symbols[end]
-        symbols[end] = temp
+        symbols[end] = "."
 
 print("-------------------------------------------")
 print("".join(symbols))

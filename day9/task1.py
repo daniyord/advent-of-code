@@ -25,24 +25,20 @@ index = 0
 while (start < end):
     for i in range(start, len(symbols) - 1):
         if symbols[i] == '.':
-            new_start = i
+            start = i
             break
 
     for i in range(end, 0, -1):
         if symbols[i] != '.':
-            new_end = i
+            end = i
             break
-
-    start = new_start
-    end = new_end
 
     print(start, end)
     # print("".join(symbols))
 
     if start < end:
-        temp = symbols[start]
         symbols[start] = symbols[end]
-        symbols[end] = temp
+        symbols[end] = "."
 
 print("-------------------------------------------")
 print("".join(symbols))
