@@ -1,6 +1,6 @@
 from itertools import repeat
 
-with open('input_demo.txt', 'r') as file:
+with open('input.txt', 'r') as file:
     input = file.readline().strip()
 
     mode = 'digit'
@@ -17,8 +17,6 @@ with open('input_demo.txt', 'r') as file:
             symbols.extend(repeat('.', int(digit)))
             mode = 'digit'
             continue
-
-symbols = list("".join(symbols))
 
 start = 0
 end = len(symbols) - 1
@@ -39,15 +37,15 @@ while (start < end):
     end = new_end
 
     print(start, end)
-    # print(symbols)
-    # print("-----------------------------------")
+    # print("".join(symbols))
 
     if start < end:
         temp = symbols[start]
         symbols[start] = symbols[end]
         symbols[end] = temp
 
-# print("".join(symbols))
+print("-------------------------------------------")
+print("".join(symbols))
 
 result = 0
 for index, symbol in enumerate(symbols):
