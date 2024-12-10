@@ -8,7 +8,7 @@ for trailhead in trailheads:
 
 sum = 0
 for key in trailheads:
-    sum += len(set(trailheads[key]))
+    sum += len(trailheads[key])
     # print(f"{key} => {trailheads[key]}")
 
 print(sum)
