@@ -28,12 +28,12 @@ for number in get_input():
 
 start = time.time()
 for i in range(0, 75):
-    temp = {}
+    new_numbers = {}
     for number in numbers:
         for new_number in process(number):
-            modify(temp, new_number, numbers[number])
+            modify(new_numbers, new_number, numbers[number])
 
-    numbers = temp
+    numbers = new_numbers
 
     result = 0
     for number in numbers:
