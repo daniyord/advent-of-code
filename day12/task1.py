@@ -1,61 +1,49 @@
 import string
+import sys
+import os
 
+sys.path.append('..')
+from utils import print_matrix, print_dict, read_matrix
 
-def print_matrix(matrix):
-    for line in matrix:
-        print(line)
+def add_place(areas, key, place):
+    if not key in areas:
+        areas[key] = []
 
+    areas[key].append(place)
 
-def add_place(dict, key, place):
-    if not key in dict:
-        dict[key] = []
+def find_connected_places(matrix, areas, i, j, value):
+    matrix[i][j] = value 
+    add_place(areas, value, (i, j))
 
-    dict[key].append(place)
+    if i > 0 and matrix[i-1][j] == value[0]:
+        find_connected_places(matrix, areas, i-1, j, value)        
+    if i < len(matrix) - 1 and matrix[i+1][j] == value[0]:
+        find_connected_places(matrix, areas, i+1, j, value)
+    if j > 0 and matrix[i][j-1] == value[0]:
+        find_connected_places(matrix, areas, i, j-1, value)
+    if j < len(matrix[0]) - 1 and matrix[i][j+1] == value[0]:
+        find_connected_places(matrix, areas, i, j+1, value)
 
+def calculate_area1(area):
+    result = 0
 
-with open('input_demo2.txt', 'r') as file:
-    matrix = []
-    areas = {}
-    indexer = {}
+    for place in area:
+        place_perimeter = 4
 
-    for letter in string.ascii_uppercase:
-        indexer[letter] = 0
+        if (place[0]-1, place[1]) in area:
+            place_perimeter -= 1
+        if (place[0], place[1]-1) in area:
+            place_perimeter -= 1
+        if (place[0]+1, place[1]) in area:
+            place_perimeter -= 1
+        if (place[0], place[1]+1) in area:
+            place_perimeter -= 1
 
-    for m_i, line in enumerate(file):
-        row = []
-        matrix.append(row)
+        result += place_perimeter
 
-        for m_j, letter in enumerate(line.strip()):
-            if m_i > 0 and matrix[m_i-1][m_j][0] == letter:
-                row.append(matrix[m_i-1][m_j])
-            else:
-                row.append(letter)
+    return result
 
-        for r_i in range(0, len(row)):
-            if len(row[r_i]) == 1:
-                if r_i > 0 and len(row[r_i-1]) > 1 and row[r_i-1][0] == row[r_i]:
-                    row[r_i] = row[r_i-1]
-
-                for r_j in range(r_i+1, len(row)):
-                    if row[r_j][0] == row[r_i]:
-                        if len(row[r_j]) > 1:
-                            row[r_i] = row[r_j]
-                            break
-                    else:
-                        break
-
-                if len(row[r_i]) == 1:
-                    indexer[row[r_i]] += 1
-                    row[r_i] += f"_{indexer[row[r_i]]}"
-            add_place(areas, row[r_i], (m_i, r_i))
-
-# print_matrix(matrix)
-
-result = 0
-for area_key in areas:
-    area = areas[area_key]
-    # print(f"{area_key}: {area}")
-
+def calculate_area(area):
     adj = 0
     for a_i in range(0, len(area)):
         for a_j in range(a_i+1, len(area)):
@@ -64,11 +52,38 @@ for area_key in areas:
             if area[a_i][1] == area[a_j][1] and abs(area[a_i][0] - area[a_j][0]) == 1:
                 adj += 1
 
-    result += (4 * len(area) - 2 * adj) * len(area)
+    return 4 * len(area) - 2 * adj
 
-    print(f"{area_key}: {area} : {
-          (4 * len(area) - 2 * adj) * len(area)}", result)
+# ------------------------------------------------------------------------------------
 
-    input()
+areas = {}
+matrix = read_matrix('input_demo.txt')
+
+print_matrix(matrix)
+
+indexer = {}
+for letter in string.ascii_uppercase:
+    indexer[letter] = 0
+
+for i, row in enumerate(matrix):
+    for j, cell in enumerate(row):
+        if len(cell) == 1:
+            indexer[cell]+= 1
+            cell += f"_{indexer[cell]}"
+            find_connected_places(matrix, areas, i, j, cell)
+print()
+print_matrix(matrix)
+
+print_dict(areas)
+
+result = 0
+for area_key in areas:
+    perimeter = calculate_area(areas[area_key])
+    rank = len(areas[area_key])
+
+    result += perimeter * rank
+
+    # print(area_key, perimeter, rank, perimeter * rank, result)   
 
 print(result)
+
