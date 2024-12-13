@@ -1,10 +1,3 @@
-import sys
-sys.path.append('..')
-
-from utils import print_matrix, print_dict, read_matrix
-# from shared import prepare_input
-
-
 def parse_button(line):
     parts = line.split(":")[1].replace("X+", "").replace("Y+", "").split(",")
 
@@ -39,22 +32,11 @@ def read_input(filepath, correction):
     return (buttons_A, buttons_B, prizes)
 
 
-def prepare_cache(cache, value, max_check):
-    if value in cache:
-        return
-
-    cached_data = [0]
-    current = 0
-    for _ in range(0, max_check):
-        current += value
-        cached_data.append(current)
-
-    cache[value] = cached_data
+def next_middle(min, max):
+    return min + (max - min) // 2 + (max - min) % 2
 
 
 def calculate(filename, correction, max_check):
-    cache = {}
-
     buttons_A, buttons_B, prizes = read_input(filename, correction)
 
     result = 0
@@ -62,30 +44,50 @@ def calculate(filename, correction, max_check):
         button_A = buttons_A[index]
         button_B = buttons_B[index]
 
-        prepare_cache(cache, button_A[0], max_check)
-        prepare_cache(cache, button_A[1], max_check)
-        prepare_cache(cache, button_B[0], max_check)
-        prepare_cache(cache, button_B[1], max_check)
-
-        min = None
+        min_found = None
         for i in range(0, max_check + 1):
-            for j in range(0, max_check + 1):
-                value_x = cache[button_A[0]][i] + cache[button_B[0]][j]
-                value_y = cache[button_A[1]][i] + cache[button_B[1]][j]
+            min = 0
+            max = max_check
+            middle = next_middle(min, max)
 
-                # print(value_x)
+            while max > min:
+                value_x = button_A[0] * i + button_B[0] * middle
+                value_y = button_A[1] * i + button_B[1] * middle
+
+                # print(middle, min, max, value_x, value_y, prize)
+
+                if value_x >= prize[0] and value_y < prize[1]:
+                    break
+
+                if value_x > prize[0] and value_y <= prize[1]:
+                    break
+
+                if value_x <= prize[0] and value_y > prize[1]:
+                    break
+
+                if value_x < prize[0] and value_y >= prize[1]:
+                    break
 
                 if value_x == prize[0] and value_y == prize[1]:
-                    new_option = 3 * i + j
-                    # print(button_A, button_B, i, j)
+                    new_option = 3 * i + middle
 
-                    if min is None or min > new_option:
-                        min = new_option
+                    if min_found is None or min_found > new_option:
+                        min_found = new_option
 
-                # if value_x > prize[0] or value_y > prize[1]:
-                #     break
+                    break
 
-        if min is not None:
-            result += min
+                if value_x < prize[0] and value_y < prize[1]:
+                    min = middle
+
+                if value_x > prize[0] and value_y > prize[1]:
+                    max = middle
+
+                middle = next_middle(min, max)
+
+                if middle == min or middle == max:
+                    break
+
+        if min_found is not None:
+            result += min_found
 
     return result
