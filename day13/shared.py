@@ -36,7 +36,7 @@ def next_middle(min, max):
     return min + (max - min) // 2 + (max - min) % 2
 
 
-def calculate(filename, correction, max_check):
+def calculate(filename, correction):
     buttons_A, buttons_B, prizes = read_input(filename, correction)
 
     result = 0
@@ -44,50 +44,29 @@ def calculate(filename, correction, max_check):
         button_A = buttons_A[index]
         button_B = buttons_B[index]
 
-        min_found = None
-        for i in range(0, max_check + 1):
-            min = 0
-            max = max_check
-            middle = next_middle(min, max)
+        y = None
+        x = None
 
-            while max > min:
-                value_x = button_A[0] * i + button_B[0] * middle
-                value_y = button_A[1] * i + button_B[1] * middle
+        y1 = button_A[0] * prize[1] - button_A[1] * prize[0]
+        y2 = button_B[1] * button_A[0] - button_A[1] * button_B[0]
 
-                # print(middle, min, max, value_x, value_y, prize)
+        if y1 % y2 == 0:
+            y = y1 // y2
 
-                if value_x >= prize[0] and value_y < prize[1]:
-                    break
+        if y is None:
+            continue
 
-                if value_x > prize[0] and value_y <= prize[1]:
-                    break
+        x1 = prize[0] - (button_B[0] * y)
+        x2 = button_A[0]
 
-                if value_x <= prize[0] and value_y > prize[1]:
-                    break
+        if x1 % x2 == 0:
+            x = x1 // x2
 
-                if value_x < prize[0] and value_y >= prize[1]:
-                    break
+        if x is None:
+            continue
 
-                if value_x == prize[0] and value_y == prize[1]:
-                    new_option = 3 * i + middle
-
-                    if min_found is None or min_found > new_option:
-                        min_found = new_option
-
-                    break
-
-                if value_x < prize[0] and value_y < prize[1]:
-                    min = middle
-
-                if value_x > prize[0] and value_y > prize[1]:
-                    max = middle
-
-                middle = next_middle(min, max)
-
-                if middle == min or middle == max:
-                    break
-
-        if min_found is not None:
-            result += min_found
+        # print(x, y)
+        result += 3 * x + y
+        # print(result)
 
     return result

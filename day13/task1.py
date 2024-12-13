@@ -3,7 +3,7 @@ import time
 
 start = time.time()
 
-result = calculate("input.txt", 0, 100)
+result = calculate("input.txt", 0)
 
 end = time.time()
 
