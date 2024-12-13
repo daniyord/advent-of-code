@@ -45,65 +45,47 @@ def calculate(filename, correction, max_check):
         button_B = buttons_B[index]
 
         min_found = None
+        for i in range(0, max_check + 1):
+            min = 0
+            max = max_check
+            middle = next_middle(min, max)
 
-        next_i = False
+            while max > min:
+                value_x = button_A[0] * i + button_B[0] * middle
+                value_y = button_A[1] * i + button_B[1] * middle
 
-        min_i = 0
-        max_i = max_check
-        middle_i = next_middle(min_i, max_i)
+                # print(middle, min, max, value_x, value_y, prize)
 
-        min_j = 0
-        max_j = max_check
-        middle_j = next_middle(min_j, max_j)
+                if value_x >= prize[0] and value_y < prize[1]:
+                    break
 
-        while max_j > min_j:
-            value_x = button_A[0] * middle_i + button_B[0] * middle_j
-            value_y = button_A[1] * middle_i + button_B[1] * middle_j
+                if value_x > prize[0] and value_y <= prize[1]:
+                    break
 
-            # print(middle, min, max, value_x, value_y, prize)
+                if value_x <= prize[0] and value_y > prize[1]:
+                    break
 
-            if value_x == prize[0] and value_y == prize[1]:
-                new_option = 3 * middle_i + middle_j
+                if value_x < prize[0] and value_y >= prize[1]:
+                    break
 
-                if min_found is None or min_found > new_option:
-                    min_found = new_option
+                if value_x == prize[0] and value_y == prize[1]:
+                    new_option = 3 * i + middle
 
-                break
+                    if min_found is None or min_found > new_option:
+                        min_found = new_option
 
-            if value_x >= prize[0] and value_y < prize[1]:
-                next_i = not next_i
+                    break
 
-            elif value_x > prize[0] and value_y <= prize[1]:
-                next_i = not next_i
+                if value_x < prize[0] and value_y < prize[1]:
+                    min = middle
 
-            elif value_x <= prize[0] and value_y > prize[1]:
-                next_i = not next_i
+                if value_x > prize[0] and value_y > prize[1]:
+                    max = middle
 
-            elif value_x < prize[0] and value_y >= prize[1]:
-                next_i = not next_i
+                middle = next_middle(min, max)
 
-            if value_x < prize[0] and value_y < prize[1]:
-                if next_i:
-                    min_i = middle_i
-                else:
-                    min_j = middle_j
-
-            if value_x > prize[0] and value_y > prize[1]:
-                if next_i:
-                    max_i = middle_i
-                else:
-                    max_j = middle_j
-
-            if next_i:
-                middle_i = next_middle(min_i, max_i)
-            else:
-                middle_j = next_middle(min_j, max_j)
-
-            if middle_i == min_i or middle_i == max_i:
-                break
-
-            if middle_j == min_j or middle_j == max_j:
-                break
+                if middle == min or middle == max:
+                    break
 
         if min_found is not None:
             result += min_found

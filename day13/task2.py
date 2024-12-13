@@ -1,9 +1,9 @@
-from day13.shared_working import calculate
+from shared import calculate
 import time
 
 start = time.time()
 
-result = calculate("input.txt", 10000000000000, 100000)
+result = calculate("input_demo.txt", 10000000000000, 1000)
 
 end = time.time()
 
