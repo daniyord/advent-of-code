@@ -1,85 +1,29 @@
-import sys
-sys.path.append('..')
-
-from utils import print_matrix, print_dict, read_matrix
-# from shared import prepare_input
+from shared import print_matrix, create_matrix, get_points_and_velocities, process_points
 
 
-def print_matrix_1(matrix):
-    for line in matrix:
-        print("".join(line))
+def check_matrix_is_symetric(matrix):
+    for row in matrix:
+        for cell in row:
+            if (cell > 1):
+                return False
+    return True
 
 
-def create_matrix(h, v):
-    matrix = []
+def calculate(filename, max_x, max_y):
+    matrix = create_matrix(max_y, max_x)
+    points, velocities = get_points_and_velocities(matrix, filename)
 
-    for i in range(0, h):
-        matrix.append([])
-        for j in range(0, v):
-            matrix[i].append(" ")
+    index = 0
+    while True:
+        index += 1
 
-    return matrix
+        process_points(points, velocities, matrix, max_x, max_y)
 
+        if check_matrix_is_symetric(matrix):
 
-def get_points_and_velocities(filename):
-    points = []
-    velocities = []
-    with open(filename, 'r') as file:
-        for line in file:
-            parts = line.strip().split(" ")
-
-            point = parts[0].replace("p=", "").split(",")
-            velocity = parts[1].replace("v=", "").split(",")
-
-            points.append((int(point[0]), int(point[1])))
-            velocities.append((int(velocity[0]), int(velocity[1])))
-
-    return (points, velocities)
+            print_matrix(matrix)
+            print(index)
+            break
 
 
-max_x = 101
-max_y = 103
-seconds = 5
-
-points, velocities = get_points_and_velocities('input.txt')
-matrix = create_matrix(max_y, max_x)
-
-# print(points)
-# print(velocities)
-# print_matrix(matrix)
-
-
-for i, point in enumerate(points):
-    p_x = point[0]
-    p_y = point[1]
-
-    velocity = velocities[i]
-    v_x = velocity[0]
-    v_y = velocity[1]
-
-    # print(p_x, p_y)
-
-    for i in range(0, seconds):
-        p_x += v_x
-        p_y += v_y
-
-        if p_x < 0:
-            p_x = max_x + p_x
-
-        if p_x >= max_x:
-            p_x = p_x - max_x
-
-        if p_y < 0:
-            p_y = max_y + p_y
-
-        if p_y >= max_y:
-            p_y = p_y - max_y
-
-        # print(f"{i}: ({p_x}, {p_y})")
-
-    if matrix[p_y][p_x] == " ":
-        matrix[p_y][p_x] = "1"
-    else:
-        matrix[p_y][p_x] = str(int(matrix[p_y][p_x]) + 1)
-
-print_matrix_1(matrix)
+calculate("input.txt", 101, 103)
