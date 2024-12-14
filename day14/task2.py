@@ -1,7 +1,7 @@
 from shared import print_matrix, create_matrix, get_points_and_velocities, process_points
 
 
-def check_matrix_is_symetric(matrix):
+def check_unique_positions(matrix):
     for row in matrix:
         for cell in row:
             if (cell > 1):
@@ -19,7 +19,7 @@ def calculate(filename, max_x, max_y):
 
         process_points(points, velocities, matrix, max_x, max_y)
 
-        if check_matrix_is_symetric(matrix):
+        if check_unique_positions(matrix):
 
             print_matrix(matrix)
             print(index)
