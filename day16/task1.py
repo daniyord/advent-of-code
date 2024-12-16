@@ -90,6 +90,6 @@ print_matrix_compact(matrix)
 
 find_shortest_path(matrix, "R", start, [], 0, totals, 0)
 
-print(totals)
+# print(totals)
 
-print(min(totals))
+print("min:", min(totals))
