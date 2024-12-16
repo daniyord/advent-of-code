@@ -4,6 +4,8 @@ sys.path.append('..')
 
 from utils import print_matrix_compact, print_dict, read_matrix
 
+cache = {}
+
 
 def get_input(filename):
     matrix = []
@@ -45,44 +47,62 @@ def find_shortest_path(matrix, direction, current, path, total, totals, depth):
     if matrix[y][x] == "E":
         # print(total, path)
         totals.append(total)
-        print(total)
-        return
+        # print(total)
+        # print(path)
+        return total
 
+    key = f"{direction}_{x}_{y}"
     # print(path)
+
+    result = -1
     if matrix[y - 1][x] in "SE." and not (x, y - 1) in path:
         if direction == "U":
-            find_shortest_path(matrix, "U", (x, y - 1),
-                               path, total + 1, totals, depth + 1)
+            result = find_shortest_path(matrix, "U", (x, y - 1),
+                                        path, total + 1, totals, depth + 1)
+            cache[key] = result
+
         if direction in "LR":
-            find_shortest_path(matrix, "U", (x, y - 1),
-                               path, total + 1001, totals, depth + 1)
+            result = find_shortest_path(matrix, "U", (x, y - 1),
+                                        path, total + 1001, totals, depth + 1)
+            cache[key] = result
 
     if matrix[y + 1][x] in "SE." and not (x, y + 1) in path:
         if direction == "D":
-            find_shortest_path(matrix, "D", (x, y + 1),
-                               path, total + 1, totals, depth + 1)
+            result = find_shortest_path(matrix, "D", (x, y + 1),
+                                        path, total + 1, totals, depth + 1)
+            cache[key] = result
+
         if direction in "LR":
-            find_shortest_path(matrix, "D", (x, y + 1),
-                               path, total + 1001, totals, depth + 1)
+            result = find_shortest_path(matrix, "D", (x, y + 1),
+                                        path, total + 1001, totals, depth + 1)
+            cache[key] = result
 
     if matrix[y][x - 1] in "SE." and not (x - 1, y) in path:
         if direction == "L":
-            find_shortest_path(matrix, "L", (x - 1, y),
-                               path, total + 1, totals, depth + 1)
+            result = find_shortest_path(matrix, "L", (x - 1, y),
+                                        path, total + 1, totals, depth + 1)
+            cache[key] = result
+
         if direction in "UD":
-            find_shortest_path(matrix, "L", (x - 1, y),
-                               path, total + 1001, totals, depth + 1)
+            result = find_shortest_path(matrix, "L", (x - 1, y),
+                                        path, total + 1001, totals, depth + 1)
+            cache[key] = result
 
     if matrix[y][x + 1] in "SE." and not (x + 1, y) in path:
         if direction == "R":
-            find_shortest_path(matrix, "R", (x + 1, y),
-                               path, total + 1, totals, depth + 1)
+            result = find_shortest_path(matrix, "R", (x + 1, y),
+                                        path, total + 1, totals, depth + 1)
+            cache[key] = result
+
         if direction in "UD":
-            find_shortest_path(matrix, "R", (x + 1, y),
-                               path, total + 1001, totals, depth + 1)
+            result = find_shortest_path(matrix, "R", (x + 1, y),
+                                        path, total + 1001, totals, depth + 1)
+            cache[key] = result
+
+    return result
 
 
-matrix, start = get_input("input.txt")
+matrix, start = get_input("input_demo2.txt")
 totals = []
 
 print(f"start: {start}")
@@ -92,4 +112,5 @@ find_shortest_path(matrix, "R", start, [], 0, totals, 0)
 
 # print(totals)
 
+print_dict(cache)
 print("min:", min(totals))
