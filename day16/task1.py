@@ -59,46 +59,39 @@ def find_shortest_path(matrix, direction, current, path, total, totals, depth):
         if direction == "U":
             result = find_shortest_path(matrix, "U", (x, y - 1),
                                         path, total + 1, totals, depth + 1)
-            cache[key] = result
 
         if direction in "LR":
             result = find_shortest_path(matrix, "U", (x, y - 1),
                                         path, total + 1001, totals, depth + 1)
-            cache[key] = result
 
     if matrix[y + 1][x] in "SE." and not (x, y + 1) in path:
         if direction == "D":
             result = find_shortest_path(matrix, "D", (x, y + 1),
                                         path, total + 1, totals, depth + 1)
-            cache[key] = result
 
         if direction in "LR":
             result = find_shortest_path(matrix, "D", (x, y + 1),
                                         path, total + 1001, totals, depth + 1)
-            cache[key] = result
 
     if matrix[y][x - 1] in "SE." and not (x - 1, y) in path:
         if direction == "L":
             result = find_shortest_path(matrix, "L", (x - 1, y),
                                         path, total + 1, totals, depth + 1)
-            cache[key] = result
 
         if direction in "UD":
             result = find_shortest_path(matrix, "L", (x - 1, y),
                                         path, total + 1001, totals, depth + 1)
-            cache[key] = result
 
     if matrix[y][x + 1] in "SE." and not (x + 1, y) in path:
         if direction == "R":
             result = find_shortest_path(matrix, "R", (x + 1, y),
                                         path, total + 1, totals, depth + 1)
-            cache[key] = result
 
         if direction in "UD":
             result = find_shortest_path(matrix, "R", (x + 1, y),
                                         path, total + 1001, totals, depth + 1)
-            cache[key] = result
 
+    cache[key] = result
     return result
 
 
