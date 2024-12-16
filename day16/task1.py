@@ -1,5 +1,5 @@
 import sys
-sys.setrecursionlimit(10**4)
+sys.setrecursionlimit(10**6)
 sys.path.append('..')
 
 from utils import print_matrix_compact, print_dict, read_matrix
@@ -45,6 +45,7 @@ def find_shortest_path(matrix, direction, current, path, total, totals, depth):
     if matrix[y][x] == "E":
         # print(total, path)
         totals.append(total)
+        print(total)
         return
 
     # print(path)
