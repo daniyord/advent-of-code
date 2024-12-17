@@ -10,100 +10,97 @@ cache = {}
 def get_input(filename):
     matrix = []
 
-    with open(filename, 'r') as file:
-        for y, line in enumerate(file):
-            row = []
-            matrix.append(row)
+    file = open(filename, 'r')
+    for y, line in enumerate(file):
+        row = []
+        matrix.append(row)
 
-            for x, symbol in enumerate(line.strip()):
-                row.append(symbol)
+        for x, symbol in enumerate(line.strip()):
+            row.append(symbol)
 
-                if symbol == "S":
-                    start = (x, y)
+            if symbol == "S":
+                start = (x, y)
 
     return (matrix, start)
 
 
-def find_shortest_path(matrix, direction, current, path, total, totals, depth):
-
-    # if depth > 200:
-    #     print(path)
-    #     print(current)
-    #     exit(0)
-    #     return
-
-    # print(direction, current)
+def shortest(matrix, direction, current, path):
+    if current in path:
+        return -1
 
     path = path[:]
-    # print(path)
     path.append(current)
-    # print(path)
 
     x = current[0]
     y = current[1]
 
-    # print(y, x, matrix[y][x])
+    if matrix[y][x] not in "SE.":
+        return -1
 
     if matrix[y][x] == "E":
-        # print(total, path)
-        totals.append(total)
-        # print(total)
-        # print(path)
-        return total
+        return 0
 
     key = f"{direction}_{x}_{y}"
-    # print(path)
 
-    result = -1
-    if matrix[y - 1][x] in "SE." and not (x, y - 1) in path:
+    # if key in path:
+    #     return -1
+
+    # path.append(key)
+
+    if key in cache:
+        return cache[key]
+
+    results = []
+    next = shortest(matrix, "U", (x, y - 1), path)
+    if next > -1:
         if direction == "U":
-            result = find_shortest_path(matrix, "U", (x, y - 1),
-                                        path, total + 1, totals, depth + 1)
-
+            results.append(1 + next)
         if direction in "LR":
-            result = find_shortest_path(matrix, "U", (x, y - 1),
-                                        path, total + 1001, totals, depth + 1)
+            results.append(1001 + next)
 
-    if matrix[y + 1][x] in "SE." and not (x, y + 1) in path:
+    next = shortest(matrix, "D", (x, y + 1), path)
+    if next > -1:
         if direction == "D":
-            result = find_shortest_path(matrix, "D", (x, y + 1),
-                                        path, total + 1, totals, depth + 1)
-
+            results.append(1 + next)
         if direction in "LR":
-            result = find_shortest_path(matrix, "D", (x, y + 1),
-                                        path, total + 1001, totals, depth + 1)
+            results.append(1001 + next)
 
-    if matrix[y][x - 1] in "SE." and not (x - 1, y) in path:
+    next = shortest(matrix, "L", (x - 1, y), path)
+    if next > -1:
         if direction == "L":
-            result = find_shortest_path(matrix, "L", (x - 1, y),
-                                        path, total + 1, totals, depth + 1)
-
+            results.append(1 + next)
         if direction in "UD":
-            result = find_shortest_path(matrix, "L", (x - 1, y),
-                                        path, total + 1001, totals, depth + 1)
+            results.append(1001 + next)
 
-    if matrix[y][x + 1] in "SE." and not (x + 1, y) in path:
+    next = shortest(matrix, "R", (x + 1, y), path)
+    if next > -1:
         if direction == "R":
-            result = find_shortest_path(matrix, "R", (x + 1, y),
-                                        path, total + 1, totals, depth + 1)
-
+            results.append(1 + next)
         if direction in "UD":
-            result = find_shortest_path(matrix, "R", (x + 1, y),
-                                        path, total + 1001, totals, depth + 1)
+            results.append(1001 + next)
+
+    # print(results)
+    if len(results) > 0:
+        result = min(results)
+        print(result, current, path)
+    else:
+        result = -1
 
     cache[key] = result
     return result
 
 
-matrix, start = get_input("input_demo2.txt")
+matrix, start = get_input("input_demo1.txt")
 totals = []
 
 print(f"start: {start}")
 print_matrix_compact(matrix)
 
-find_shortest_path(matrix, "R", start, [], 0, totals, 0)
+result = shortest(matrix, "R", start, [])
 
 # print(totals)
 
-print_dict(cache)
-print("min:", min(totals))
+# print_dict(cache)
+# print("min:", min(totals))
+
+print(result)
