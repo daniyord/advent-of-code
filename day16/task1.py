@@ -4,8 +4,6 @@ sys.path.append('..')
 
 from utils import print_matrix_compact, print_dict, read_matrix
 
-cache = {}
-
 
 def get_input(filename):
     matrix = []
@@ -19,88 +17,82 @@ def get_input(filename):
             row.append(symbol)
 
             if symbol == "S":
-                start = (x, y)
+                start = (x, y, "R")
 
     return (matrix, start)
 
 
-def shortest(matrix, direction, current, path):
-    if current in path:
-        return -1
+def check(matrix, total, new_x, new_y, new_direction, limit_direction, turn_directions):
+    if matrix[new_y][new_x] in "E." and direction != limit_direction:
+        next = (new_x, new_y, new_direction)
 
-    path = path[:]
-    path.append(current)
+        if direction == new_direction:
+            new_total = 1 + total
+        if direction in turn_directions:
+            new_total = 1001 + total
 
-    x = current[0]
-    y = current[1]
+        # if next in visited:
+        #     print(visited[next], new_total)
+        if next not in visited or visited[next][0] > new_total:
+            return (next, new_total)
 
-    if matrix[y][x] not in "SE.":
-        return -1
-
-    if matrix[y][x] == "E":
-        return 0
-
-    key = f"{direction}_{x}_{y}"
-
-    # if key in path:
-    #     return -1
-
-    # path.append(key)
-
-    if key in cache:
-        return cache[key]
-
-    results = []
-    next = shortest(matrix, "U", (x, y - 1), path)
-    if next > -1:
-        if direction == "U":
-            results.append(1 + next)
-        if direction in "LR":
-            results.append(1001 + next)
-
-    next = shortest(matrix, "D", (x, y + 1), path)
-    if next > -1:
-        if direction == "D":
-            results.append(1 + next)
-        if direction in "LR":
-            results.append(1001 + next)
-
-    next = shortest(matrix, "L", (x - 1, y), path)
-    if next > -1:
-        if direction == "L":
-            results.append(1 + next)
-        if direction in "UD":
-            results.append(1001 + next)
-
-    next = shortest(matrix, "R", (x + 1, y), path)
-    if next > -1:
-        if direction == "R":
-            results.append(1 + next)
-        if direction in "UD":
-            results.append(1001 + next)
-
-    # print(results)
-    if len(results) > 0:
-        result = min(results)
-        print(result, current, path)
-    else:
-        result = -1
-
-    cache[key] = result
-    return result
+    return None
 
 
-matrix, start = get_input("input_demo1.txt")
+matrix, start = get_input("input.txt")
 totals = []
 
 print(f"start: {start}")
 print_matrix_compact(matrix)
 
-result = shortest(matrix, "R", start, [])
+visited = {}
+available = [(start, (0, None))]
 
-# print(totals)
+# print("available:", available)
+# print("visited:", visited)
 
-# print_dict(cache)
-# print("min:", min(totals))
+found = None
+depth = 0
+while len(available) > 0:
+    current = available[0]
 
-print(result)
+    for i in range(1, len(available)):
+        if available[i][1][0] < current[1][0]:
+            current = available[i]
+
+    available.remove(current)
+    visited[current[0]] = current[1]
+
+    x = current[0][0]
+    y = current[0][1]
+    direction = current[0][2]
+    total = current[1][0]
+
+    if matrix[y][x] == "E":
+        found = current[1][0]
+        print(found)
+        exit(0)
+
+    # print("current", x, y, direction, total)
+
+    up = check(matrix, total, x, y - 1, "U", "D", "LR")
+    if up:
+        available.append((up[0], (up[1], current[0])))
+
+    down = check(matrix, total, x, y + 1, "D", "U", "LR")
+    if down:
+        available.append((down[0], (down[1], current[0])))
+
+    left = check(matrix, total, x - 1, y, "L", "R", "UD")
+    if left:
+        available.append((left[0], (left[1], current[0])))
+
+    right = check(matrix, total, x + 1, y, "R", "L", "UD")
+    if right:
+        available.append((right[0], (right[1], current[0])))
+
+    # print()
+    # print("available:", available)
+    # print("visited:", visited)
+
+    depth += 1
