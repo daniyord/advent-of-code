@@ -46,7 +46,7 @@ print(f"start: {start}")
 print_matrix_compact(matrix)
 
 visited = {}
-available = [(start, (0, None))]
+available = {(start, (0, None))}
 
 # print("available:", available)
 # print("visited:", visited)
@@ -54,11 +54,16 @@ available = [(start, (0, None))]
 found = None
 depth = 0
 while len(available) > 0:
-    current = available[0]
+    # current = available[0]
 
-    for i in range(1, len(available)):
-        if available[i][1][0] < current[1][0]:
-            current = available[i]
+    # for i in range(1, len(available)):
+    #     if available[i][1][0] < current[1][0]:
+    #         current = available[i]
+
+    current = None
+    for item in available:
+        if current is None or item[1][0] < current[1][0]:
+            current = item
 
     available.remove(current)
     visited[current[0]] = current[1]
@@ -70,26 +75,32 @@ while len(available) > 0:
 
     if matrix[y][x] == "E":
         found = current[1][0]
+        # print("available:", available)
+        # print("visited:", visited)
         print(found)
-        exit(0)
+        # exit(0)
 
-    # print("current", x, y, direction, total)
+    # print(f"{depth}: available: {len(available)} visited: {
+    #       len(visited)} current: {current}")
 
     up = check(matrix, total, x, y - 1, "U", "D", "LR")
     if up:
-        available.append((up[0], (up[1], current[0])))
+        available.add((up[0], (up[1], current[0])))
 
     down = check(matrix, total, x, y + 1, "D", "U", "LR")
     if down:
-        available.append((down[0], (down[1], current[0])))
+        available.add((down[0], (down[1], current[0])))
 
     left = check(matrix, total, x - 1, y, "L", "R", "UD")
     if left:
-        available.append((left[0], (left[1], current[0])))
+        available.add((left[0], (left[1], current[0])))
 
     right = check(matrix, total, x + 1, y, "R", "L", "UD")
     if right:
-        available.append((right[0], (right[1], current[0])))
+        available.add((right[0], (right[1], current[0])))
+
+    # print(f"{depth}: available: {len(available)} visited: {
+    #       len(visited)} current: {current}")
 
     # print()
     # print("available:", available)
