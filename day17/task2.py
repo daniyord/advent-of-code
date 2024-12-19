@@ -3,16 +3,33 @@ from shared import get_input, get_literal, get_combo, op_jnz
 r_a, r_b, r_c, code = get_input("input_demo2.txt")
 i_p = 0
 
+r_b_org = r_b
+r_c_org = r_c
+
 output = []
-while (i_p < len(code)):
+
+depth = 1
+r_a = depth
+
+
+def reset_state(depth):
+    r_a = depth
+    r_b = r_b_org
+    r_c = r_c_org
+
+    return (r_a, r_b, r_c, 0, [])
+
+
+while depth < 150000:
+    if i_p >= len(code):
+        depth += 1
+        r_a, r_b, r_c, i_p, output = reset_state(depth)
+        print(f"calculating1: {depth}")
+        continue
+
     instruction = code[i_p]
     literal = get_literal(code, i_p)
     combo = get_combo(code, i_p, r_a, r_b, r_c)
-
-    # print(code, i_p, r_a, r_b, r_c, instruction, literal, combo)
-    # print(output)
-    # print()
-    # input()
 
     match instruction:
         case 0:  # adv
@@ -31,7 +48,16 @@ while (i_p < len(code)):
             i_p += 2
         case 5:  # out
             output.append(combo % 8)
-            i_p += 2
+
+            if code[:len(output)] != output or len(output) > len(code):
+                depth += 1
+                r_a, r_b, r_c, i_p, output = reset_state(depth)
+                print(f"calculating2: {depth}")
+            elif len(output) == len(code):
+                print(f"success: {depth}")
+                exit(0)
+            else:
+                i_p += 2
         case 6:  # bdv
             r_b = r_a // 2 ** combo
             i_p += 2
@@ -40,4 +66,6 @@ while (i_p < len(code)):
             i_p += 2
 
 
-print(",".join([str(x) for x in output]))
+print("not success")
+
+# print(",".join([str(x) for x in output]))
