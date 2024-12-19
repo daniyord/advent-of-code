@@ -23,8 +23,9 @@ def reset_state(depth):
 while depth < 150000:
     if i_p >= len(code):
         depth += 1
+        print(f"calculating1: {depth}, {len(output)}")
         r_a, r_b, r_c, i_p, output = reset_state(depth)
-        print(f"calculating1: {depth}")
+
         continue
 
     instruction = code[i_p]
@@ -51,8 +52,8 @@ while depth < 150000:
 
             if code[:len(output)] != output or len(output) > len(code):
                 depth += 1
+                print(f"calculating2: {depth}, {len(output)}")
                 r_a, r_b, r_c, i_p, output = reset_state(depth)
-                print(f"calculating2: {depth}")
             elif len(output) == len(code):
                 print(f"success: {depth}")
                 exit(0)
