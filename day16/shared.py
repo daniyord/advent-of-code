@@ -55,6 +55,8 @@ def shortest_path(matrix, start):
                 current[1][0], None if current[1][1] is None else [current[1][1]])
         elif current[1][0] == visited[current[0]][0]:
             visited[current[0]][1].append(current[1][1])
+        else:
+            continue
 
         x = current[0][0]
         y = current[0][1]
@@ -69,6 +71,8 @@ def shortest_path(matrix, start):
                 found_min = current[1][0]
             elif found_min == current[1][0]:
                 found.append(current[0])
+            else:
+                continue
 
         up = check(matrix, visited, total, direction, x, y - 1, "U", "D", "LR")
         if up:
