@@ -67,5 +67,3 @@ while depth < 150000:
 
 
 print("not success")
-
-# print(",".join([str(x) for x in output]))
