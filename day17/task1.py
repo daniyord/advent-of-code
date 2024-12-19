@@ -1,6 +1,6 @@
 from shared import get_input, get_literal, get_combo, op_jnz
 
-r_a, r_b, r_c, code = get_input("input_demo2.txt")
+r_a, r_b, r_c, code = get_input("input_demo1.txt")
 i_p = 0
 
 output = []
@@ -9,7 +9,7 @@ while (i_p < len(code)):
     literal = get_literal(code, i_p)
     combo = get_combo(code, i_p, r_a, r_b, r_c)
 
-    # print(code, i_p, r_a, r_b, r_c, instruction, literal, combo)
+    print(code, i_p, r_a, r_b, r_c, instruction, literal, combo)
     # print(output)
     # print()
     # input()
