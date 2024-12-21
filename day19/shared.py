@@ -15,47 +15,34 @@ def get_input(filename):
 
 
 def find_patterns(design, patterns):
-    print(design)
+    # print(design)
     checks = {}
 
     for pattern in patterns:
         if design.startswith(pattern):
-            checks[pattern] = len(pattern)
+            checks[len(pattern)] = 1
 
     # print(checks)
-    # print()
+    while len(checks) > 0 and min(checks) < len(design):
+        next = min(checks)
 
-    border = 0
-    while len(checks) > 0:
-        border += 1
+        for pattern in patterns:
+            if design[next:].startswith(pattern):
+                new_length = next + len(pattern)
 
-        if border == 10:
-            break
+                if not new_length in checks:
+                    checks[new_length] = 0
 
-        new_checks = {}
+                checks[new_length] += checks[next]
 
-        for check in checks:
-            total = checks[check]
-
-            for pattern in patterns:
-                if design[total:].startswith(pattern):
-                    if total + len(pattern) >= len(design):
-                        return True
-
-                    # t = list(check[0])
-                    # t.append(pattern)
-
-                    # print(len(design), check[1] + len(pattern))
-                    new_checks[check + pattern] = total + len(pattern)
-
+        del checks[next]
         # print(checks)
 
-        # if len(new_checks) > 45:
-        #     return False
+    if len(design) in checks:
+        # print("success:", checks[len(design)])
+        # print()
+        return checks[len(design)]
 
-        checks = new_checks
-
-        print(checks)
-        print()
-
-    return False
+    # print("fail:")
+    # print()
+    return 0
