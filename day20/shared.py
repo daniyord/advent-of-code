@@ -99,6 +99,6 @@ def process(filename, min_advancement, cheat):
 
                     result += 1
 
-    print_dict(result_dict)
+    # print_dict(result_dict)
 
     return result
