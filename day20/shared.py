@@ -8,14 +8,12 @@ def check_next(matrix, x_corection, y_corection, next, visited, available):
 
         if new_point not in visited:
             if new_point not in available or available[new_point][0] > total + 1:
-                available[new_point] = (total + 1, {(x, y)})
-            elif available[new_point][0] == total + 1:
-                available[new_point][1].add((x, y))
+                available[new_point] = (total + 1, (x, y))
 
 
 def find_short_path(matrix, start, end):
     visited = {}
-    available = {start: (0, set())}
+    available = {start: (0, None)}
     founded = []
 
     while len(available) > 0:
@@ -32,13 +30,9 @@ def find_short_path(matrix, start, end):
 
         if (x, y) not in visited or visited[(x, y)][0] > total:
             visited[(x, y)] = (total, prev)
-        elif visited[(x, y)][0] == total:
-            visited[(x, y)][1].insert(prev)
 
         if (next[0] == end):
-            print("success", available[key][0])
-
-            founded = (key, (available[key][1]))
+            founded = (key, available[key][1])
 
             del available[next[0]]
             continue
@@ -53,27 +47,11 @@ def find_short_path(matrix, start, end):
     return (founded, visited)
 
 
-def restore_paths(visited, prev):
+def restore_path(visited, prev):
     result = []
 
-    for prev_option in prev[1]:
-        result.append([prev[0]] + [prev_option])
-
-    while True:
-        new_result = []
-
-        for item in result:
-            next = visited[item[-1]]
-
-            if len(next[1]) == 0:
-                break
-
-            for n in next[1]:
-                new_result.append(item + [n])
-
-        if len(new_result) == 0:
-            break
-        else:
-            result = new_result
+    while prev[1] != None:
+        result.append(prev[0])
+        prev = (prev[1], visited[prev[1]][1])
 
     return result
