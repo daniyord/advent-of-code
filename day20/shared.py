@@ -1,3 +1,9 @@
+import sys
+sys.path.append('..')
+
+from utils import read_matrix, print_matrix_compact, print_matrix, print_dict
+
+
 def check_next(matrix, x_corection, y_corection, next, visited, available):
     x = next[0][0]
     y = next[0][1]
@@ -53,5 +59,46 @@ def restore_path(visited, prev):
     while prev[1] != None:
         result.append(prev[0])
         prev = (prev[1], visited[prev[1]][1])
+
+    return result
+
+
+def process(filename, min_advancement, cheat):
+    matrix, start, end = read_matrix(filename)
+
+    founded, visited = find_short_path(matrix, start, end)
+    founded_path = restore_path(visited, founded) + [start]
+
+    founded_path = list(reversed(founded_path))
+
+    # print(len(founded_path))
+    # print(founded_path)
+
+    total = len(founded_path)
+
+    result = 0
+    result_dict = {}
+    total = len(founded_path)
+
+    for i in range(0, len(founded_path)):
+        for j in range(i + 1, len(founded_path)):
+            first = founded_path[i]
+            second = founded_path[j]
+
+            first_to_end = total - i
+            second_to_end = total - j
+            first_to_second = first_to_end - second_to_end
+            manhatan = abs(first[0] - second[0]) + abs(first[1] - second[1])
+
+            if manhatan <= cheat:
+                diff = first_to_second - manhatan
+                if diff >= min_advancement:
+                    if diff not in result_dict:
+                        result_dict[diff] = 0
+                    result_dict[diff] += 1
+
+                    result += 1
+
+    print_dict(result_dict)
 
     return result
