@@ -54,26 +54,16 @@ def find_short_path(matrix, start, end):
 
 
 def restore_paths(visited, prev):
-    print("restore_paths", prev)
-
     result = []
 
     for prev_option in prev[1]:
-        print([prev[0]])
-        print(visited[prev_option][1])
         result.append([prev[0]] + [prev_option])
 
     while True:
-        # print("while")
-
-        # print(result)
-
         new_result = []
 
         for item in result:
-            # print(item[-1])
             next = visited[item[-1]]
-            # print(next)
 
             if len(next[1]) == 0:
                 break
