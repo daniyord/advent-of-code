@@ -44,6 +44,7 @@ founded, visited = find_short_path(matrix, start, end)
 founded_paths = restore_paths(visited, founded)
 
 
+result = 0
 for fp in founded_paths:
 
     fpr = list(reversed(fp))
@@ -52,7 +53,6 @@ for fp in founded_paths:
     for index, fp in enumerate(fpr):
         fpr_dict[fp] = index
 
-    result = 0
     border = 100
 
     for i, point in enumerate(fpr):
