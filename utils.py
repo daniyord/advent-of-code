@@ -2,14 +2,24 @@ def read_matrix(filepath):
     with open(filepath, 'r') as file:
         matrix = []
 
-        for line in file:
+        for y, line in enumerate(file):
+            line = line.strip()
+
+            if (len(line) == 0):
+                break
+
             row = []
             matrix.append(row)
 
-            for symbol in line.strip():
+            for x, symbol in enumerate(line):
+                if symbol == "S":
+                    start = (x, y)
+                if symbol == "E":
+                    end = (x, y)
+
                 row.append(symbol)
 
-    return matrix
+    return (matrix, start, end)
 
 
 def print_matrix(matrix):
