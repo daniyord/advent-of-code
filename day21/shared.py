@@ -2,7 +2,7 @@ import networkx as nx
 from itertools import combinations
 
 
-def numeric_keyboard_graph():
+def get_numeric_keypad_graph():
     G = nx.DiGraph()
 
     G.add_edge('7', '4', command="v")
@@ -53,28 +53,53 @@ def numeric_keyboard_graph():
     return G
 
 
-def command_keyboard_graph():
-    G = nx.DiGraph()
+def get_directional_keypad_matrix():
+    return {
+        "A>": "vA",
+        "A<": "v<<A",
+        "A^": "<A",
+        "Av": "v<A",
 
-    G.add_edge('^', 'v', command="v")
-    G.add_edge('v', '^', command="^")
+        ">A": "^A",
+        "><": "<<A",
+        ">^": "^<A",
+        ">v": "<A",
 
-    G.add_edge('^', 'A', command=">")
-    G.add_edge('A', '^', command="<")
+        "<A": ">>^A",
+        "<>": ">>A",
+        "<^": ">^A",
+        "<v": ">A",
 
-    G.add_edge('A', '>', command="v")
-    G.add_edge('>', 'A', command="^")
+        "^A": ">A",
+        "^>": ">vA",
+        "^<": "v<A",
+        "^v": "vA",
 
-    G.add_edge('<', 'v', command=">")
-    G.add_edge('v', '<', command="<")
-
-    G.add_edge('v', '>', command=">")
-    G.add_edge('>', 'v', command="<")
-
-    return G
+        "vA": "^>A",
+        "v>": ">A",
+        "v<": "<A",
+        "v^": "^A",
+    }
 
 
-def get_parts(graph, start, end):
+def get_num_commands(code):
+    result = [""]
+
+    for i in range(0, len(code) - 1):
+        parts = get_parts(code[i], code[i + 1])
+
+        new_result = []
+        for item1 in result:
+            for item2 in parts:
+                new_result.append(item1 + item2)
+
+        result = new_result
+
+    return result
+
+
+def get_parts(start, end):
+    graph = get_numeric_keypad_graph()
     result = []
 
     short_paths = nx.all_shortest_paths(graph, start, end)
@@ -95,18 +120,41 @@ def get_parts(graph, start, end):
     return result
 
 
-def get_commands(code, graph):
-    result = [""]
+def get_dir_commands(code):
+    commands = []
+
+    matrix = get_directional_keypad_matrix()
 
     for i in range(0, len(code) - 1):
-        parts = get_parts(graph, code[i], code[i + 1])
+        if code[i] == code[i + 1]:
+            commands.append("A")
+        else:
+            commands.append(matrix[code[i:i + 2]])
 
-        new_result = []
+    return "".join(commands)
 
-        for item1 in result:
-            for item2 in parts:
-                new_result.append(item1 + item2)
 
-        result = new_result
+def get_complexity(code):
+    min_complexity = None
 
-    return result
+    code1 = get_num_commands("A" + code)
+
+    for code1 in get_num_commands("A" + code):
+        # print(code1)
+
+        code2 = get_dir_commands("A" + code1)
+
+        # print(code2)
+
+        code3 = get_dir_commands("A" + code2)
+
+        # print(code1, code2, code3)
+
+        # print(code, code3, len(code3))
+
+        if min_complexity is None or len(code3) < min_complexity:
+            min_complexity = len(code3)
+
+    print(min_complexity, code.replace("A", "").lstrip("0"),
+          min_complexity * int(code.replace("A", "").lstrip("0")))
+    return min_complexity * int(code.replace("A", "").lstrip("0"))
