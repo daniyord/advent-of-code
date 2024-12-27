@@ -1,5 +1,4 @@
 import networkx as nx
-from itertools import combinations
 
 
 def get_numeric_keypad_graph():
@@ -134,27 +133,54 @@ def get_dir_commands(code):
     return "".join(commands)
 
 
-def get_complexity(code):
+def get_complexity(num_code, depth):
+    # print("num_code:", num_code)
     min_complexity = None
 
-    code1 = get_num_commands("A" + code)
+    for code in get_num_commands("A" + num_code):
+        temp = get_complexity_inner(code, depth)
 
-    for code1 in get_num_commands("A" + code):
-        # print(code1)
+        if min_complexity is None or temp < min_complexity:
+            min_complexity = temp
 
-        code2 = get_dir_commands("A" + code1)
+    num_part = int(num_code.replace("A", "").lstrip("0"))
+    print(min_complexity, num_part, min_complexity * num_part)
+    return min_complexity * num_part
 
-        # print(code2)
 
-        code3 = get_dir_commands("A" + code2)
+def get_complexity_inner(num_code, depth):
+    accumulator = {}
 
-        # print(code1, code2, code3)
+    for item in num_code[:-1].split("A"):
+        key = f"{item}A"
+        if key not in accumulator:
+            accumulator[key] = 0
+        accumulator[key] += 1
 
-        # print(code, code3, len(code3))
+    for _ in range(0, depth):
+        new_accumulator = {}
 
-        if min_complexity is None or len(code3) < min_complexity:
-            min_complexity = len(code3)
+        for key in accumulator:
+            value = accumulator[key]
 
-    print(min_complexity, code.replace("A", "").lstrip("0"),
-          min_complexity * int(code.replace("A", "").lstrip("0")))
-    return min_complexity * int(code.replace("A", "").lstrip("0"))
+            # print(key, test_dict[key])
+            # print(f"A{key}")
+            # print(get_dir_commands(f"A{key}"))
+
+            parts = get_dir_commands(f"A{key}")[:-1].split("A")
+
+            for item in parts:
+                key = f"{item}A"
+                if key not in new_accumulator:
+                    new_accumulator[key] = 0
+
+                new_accumulator[key] += value
+
+            # print(new_test_dict)
+        accumulator = new_accumulator
+
+    result = 0
+    for key in accumulator:
+        result += len(key) * accumulator[key]
+
+    return result

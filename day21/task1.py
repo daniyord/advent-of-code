@@ -5,6 +5,6 @@ from shared import get_complexity
 result = 0
 file = open('input.txt', 'r')
 for line in file:
-    result += get_complexity(line.strip())
+    result += get_complexity(line.strip(), 2)
 
 print(result)
