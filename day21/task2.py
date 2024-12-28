@@ -1,4 +1,3 @@
-import networkx as nx
 from shared import get_complexity
 
 result = 0
