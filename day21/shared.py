@@ -53,15 +53,23 @@ def get_numeric_keypad_graph():
 
 
 def get_directional_keypad_matrix():
+    # All else being the same, prioritize moving < over ^ over v over >. I found this through trial and error.
+
+    #     +---+---+
+    #     | ^ | A |
+    # +---+---+---+
+    # | < | v | > |
+    # +---+---+---+
+
     return {
         "A>": "vA",
         "A<": "v<<A",
         "A^": "<A",
-        "Av": "v<A",
+        "Av": "<vA",
 
         ">A": "^A",
         "><": "<<A",
-        ">^": "^<A",
+        ">^": "<^A",
         ">v": "<A",
 
         "<A": ">>^A",
@@ -70,8 +78,8 @@ def get_directional_keypad_matrix():
         "<v": ">A",
 
         "^A": ">A",
-        "^>": ">vA",
-        "^<": "v<A",
+        "^>": "v>A",
+        "^<": "<vA",
         "^v": "vA",
 
         "vA": "^>A",
@@ -144,7 +152,7 @@ def get_complexity(num_code, depth):
             min_complexity = temp
 
     num_part = int(num_code.replace("A", "").lstrip("0"))
-    print(min_complexity, num_part, min_complexity * num_part)
+    # print(min_complexity, num_part, min_complexity * num_part)
     return min_complexity * num_part
 
 
@@ -182,5 +190,7 @@ def get_complexity_inner(num_code, depth):
     result = 0
     for key in accumulator:
         result += len(key) * accumulator[key]
+
+    # print(accumulator)
 
     return result
