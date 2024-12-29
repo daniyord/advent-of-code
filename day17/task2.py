@@ -1,70 +1,45 @@
-from shared import get_input, get_literal, get_combo, op_jnz
+import bitarray as ba
+import bitarray.util as bau
+import itertools as it
 
-r_a, r_b, r_c, code = get_input("input_demo2.txt")
-i_p = 0
-
-r_b_org = r_b
-r_c_org = r_c
-
-output = []
-
-depth = 1
-r_a = depth
+from shared import calculate, get_input
 
 
-def reset_state(depth):
-    r_a = depth
-    r_b = r_b_org
-    r_c = r_c_org
+def process(filename, start, end, step):
+    _, r_b, r_c, code = get_input(filename)
+    valid = [ba.bitarray()]
 
-    return (r_a, r_b, r_c, 0, [])
+    similarity_num = 0
+    is_first = True
+    for j in range(start, end + 1, step):
+        similarity_num += 1
 
+        if j >= end:
+            similarity_num = len(code)
 
-while depth < 150000:
-    if i_p >= len(code):
-        depth += 1
-        print(f"calculating1: {depth}, {len(output)}")
-        r_a, r_b, r_c, i_p, output = reset_state(depth)
+        new_valid = []
 
-        continue
+        if is_first:
+            gen_step = start
+            is_first = False
+        else:
+            gen_step = step
 
-    instruction = code[i_p]
-    literal = get_literal(code, i_p)
-    combo = get_combo(code, i_p, r_a, r_b, r_c)
+        for v in valid:
+            for p in it.product("01", repeat=gen_step):
+                b = ba.bitarray("".join(p)) + v
 
-    match instruction:
-        case 0:  # adv
-            r_a = r_a // 2 ** combo
-            i_p += 2
-        case 1:  # bxl
-            r_b = r_b ^ literal
-            i_p += 2
-        case 2:  # bst
-            r_b = combo % 8
-            i_p += 2
-        case 3:  # jnz
-            i_p = op_jnz(i_p, r_a, literal)
-        case 4:  # bxc
-            r_b = r_b ^ r_c
-            i_p += 2
-        case 5:  # out
-            output.append(combo % 8)
+                output = calculate(bau.ba2int(b), r_b, r_c, code)
 
-            if code[:len(output)] != output or len(output) > len(code):
-                depth += 1
-                print(f"calculating2: {depth}, {len(output)}")
-                r_a, r_b, r_c, i_p, output = reset_state(depth)
-            elif len(output) == len(code):
-                print(f"success: {depth}")
-                exit(0)
-            else:
-                i_p += 2
-        case 6:  # bdv
-            r_b = r_a // 2 ** combo
-            i_p += 2
-        case 7:  # cdv
-            r_c = r_a // 2 ** combo
-            i_p += 2
+                if code[:similarity_num] == output[:similarity_num]:
+                    new_valid.append(b)
+
+        valid = new_valid
+
+        print(j, similarity_num, len(valid))
+
+    print(bau.ba2int(valid[0]))
 
 
-print("not success")
+# process("input_demo2.txt", 6, 18, 3)
+process("input.txt", 12, 48, 3)
